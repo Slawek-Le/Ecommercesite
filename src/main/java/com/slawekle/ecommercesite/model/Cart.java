@@ -17,7 +17,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -37,15 +36,26 @@ public class Cart {
     private Set<CartItem> items = new HashSet<>();
 
     public void removeItem(CartItem cartItem) {
-        items.remove(cartItem);
+        this.items.remove(cartItem);
         cartItem.setCart(null);
         updateTotalAmount();
     }
 
     private void updateTotalAmount() {
         // totalAmount = items.stream()
-        //         .map(CartItem::getTotalPrice)
-        //         .reduce(BigDecimal.ZERO, BigDecimal::add);
+        // .map(CartItem::getTotalPrice)
+        // .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public void addItem(CartItem cartItem) {
+        this.items.add(cartItem);
+        cartItem.setCart(this);
+        updateTotalAmount();
+    }
+
+    public void clearCart() {
+        this.items.clear();
+        updateTotalAmount();
     }
 
 }

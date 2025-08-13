@@ -3,12 +3,17 @@ package com.slawekle.ecommercesite.service.user;
 import java.util.List;
 import java.util.Optional;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.slawekle.ecommercesite.dtos.UserCartOrdersDto;
+import com.slawekle.ecommercesite.dtos.UserDto;
 import com.slawekle.ecommercesite.model.User;
 import com.slawekle.ecommercesite.repository.UserRepository;
 import com.slawekle.ecommercesite.request.CreateUserRequest;
 import com.slawekle.ecommercesite.request.UpdateUserRequest;
+import com.slawekle.ecommercesite.service.cart.ICartService;
+import com.slawekle.ecommercesite.service.order.IOrderService;
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,6 +23,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService implements IUserService {
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
+    private final IOrderService orderService;
+    private final ICartService cartService;
 
     @Override
     public User createUser(CreateUserRequest userRequest) {
@@ -61,6 +69,28 @@ public class UserService implements IUserService {
     @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public UserDto convertToDto(User user) {
+        return modelMapper.map(user, UserDto.class);
+    }
+
+    @Override
+    public List<UserDto> convertToDtoList(List<User> users) {
+        return users.stream()
+                .map(this::convertToDto)
+                .toList();
+    }
+
+    @Override
+    public UserCartOrdersDto convertToCartOrdersDto(Long userId) {
+        UserCartOrdersDto dto = new UserCartOrdersDto();
+        User user = getUserById(userId);
+        dto.setUser(convertToDto(user));
+        dto.setCart(cartService.convertToDto(cartService.getCartByUserId(userId)));
+        dto.setOrders(orderService.convertToDtoList(orderService.getUserOrders(userId)));
+        return dto;
     }
 
 }

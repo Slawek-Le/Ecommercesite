@@ -166,11 +166,8 @@ public class ProductService implements IProductService {
                 .toList();
         productDto.setImages(imageDtos);
 
-            // Explicitly set category name (or object) if needed
     if (product.getCategory() != null) {
         productDto.setCategory(product.getCategory());
-        // or, if ProductDto has a CategoryDto:
-        // productDto.setCategory(modelMapper.map(product.getCategory(), CategoryDto.class));
     }
         return productDto;
     }

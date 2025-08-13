@@ -2,6 +2,8 @@ package com.slawekle.ecommercesite.service.user;
 
 import java.util.List;
 
+import com.slawekle.ecommercesite.dtos.UserCartOrdersDto;
+import com.slawekle.ecommercesite.dtos.UserDto;
 import com.slawekle.ecommercesite.model.User;
 import com.slawekle.ecommercesite.request.CreateUserRequest;
 import com.slawekle.ecommercesite.request.UpdateUserRequest;
@@ -16,5 +18,10 @@ public interface IUserService {
     void deleteUser(Long userId);
 
     List<User> getAllUsers();
+
+    UserDto convertToDto(User user);
+    List<UserDto> convertToDtoList(List<User> users);
+
+    UserCartOrdersDto convertToCartOrdersDto(Long userId);
 
 }

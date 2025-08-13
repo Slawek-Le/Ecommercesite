@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.slawekle.ecommercesite.model.Category;
 import com.slawekle.ecommercesite.response.ApiResponse;
-import com.slawekle.ecommercesite.service.category.CategoryService;
+import com.slawekle.ecommercesite.service.category.ICategoryService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/categories")
 public class CategoryController {
-    private final CategoryService iCategoryService;
+    private final ICategoryService iCategoryService;
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponse> getAllCategories() {
