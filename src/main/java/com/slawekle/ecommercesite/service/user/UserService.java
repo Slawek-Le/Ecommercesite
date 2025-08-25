@@ -1,9 +1,14 @@
 package com.slawekle.ecommercesite.service.user;
 
+import java.lang.foreign.Linker.Option;
 import java.util.List;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.method.P;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.slawekle.ecommercesite.dtos.UserCartOrdersDto;
@@ -26,6 +31,7 @@ public class UserService implements IUserService {
     private final ModelMapper modelMapper;
     private final IOrderService orderService;
     private final ICartService cartService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public User createUser(CreateUserRequest userRequest) {
@@ -35,7 +41,7 @@ public class UserService implements IUserService {
                     newUser.setFirstName(req.getFirstName());
                     newUser.setLastName(req.getLastName());
                     newUser.setEmail(req.getEmail());
-                    newUser.setPassword(req.getPassword());
+                    newUser.setPassword(passwordEncoder.encode(req.getPassword()));
                     return userRepository.save(newUser);
                 })
                 .orElseThrow(() -> new EntityExistsException(
@@ -91,6 +97,14 @@ public class UserService implements IUserService {
         dto.setCart(cartService.convertToDto(cartService.getCartByUserId(userId)));
         dto.setOrders(orderService.convertToDtoList(orderService.getUserOrders(userId)));
         return dto;
+    }
+
+    @Override
+    public User getAuthenticatedUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return Optional.ofNullable(userRepository.findByEmail(email))
+                .orElseThrow(() -> new EntityNotFoundException("Log in required."));
     }
 
 }

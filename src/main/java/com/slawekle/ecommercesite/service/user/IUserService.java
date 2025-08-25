@@ -24,4 +24,6 @@ public interface IUserService {
 
     UserCartOrdersDto convertToCartOrdersDto(Long userId);
 
+    User getAuthenticatedUser();
+
 }
